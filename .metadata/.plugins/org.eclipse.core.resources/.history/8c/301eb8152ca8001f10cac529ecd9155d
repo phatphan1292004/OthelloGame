@@ -1,0 +1,130 @@
+package main;
+
+import java.util.List;
+
+public class BOT {
+    private Board board;
+
+    public BOT(Board board) {
+        this.board = board;
+    }
+
+    // Đánh giá bàn cờ (sự chênh lệch giữa số quân đen và số quân trắng)
+    public int evaluateBoard() {
+        int score = 0;
+        int color = board.getTurn();  // Màu của người chơi hiện tại
+
+        // Đánh giá các ô cạnh
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                int piece = board.getState(i, j);  // Lấy quân cờ tại vị trí (i, j)
+
+                // Cộng điểm cho quân của người chơi
+                score += piece * color;
+
+                // Cộng thêm điểm cho quân cờ nằm ở cạnh bàn cờ
+                if (board.isSide(i, j)) {
+                    score += 10 * piece * color;
+                }
+
+                // Cộng thêm điểm cho quân cờ nằm ở góc bàn cờ
+                if (board.isCorner(i, j)) {
+                    score += 40 * piece * color;
+                }
+            }
+        }
+
+        // Cộng thêm 5 điểm cho mỗi nước đi hợp lệ
+        score += board.getValidMoves().size() * 5;
+
+        return score;
+    }
+
+    // Thuật toán Minimax để tối ưu hóa nước đi
+    public int minimax(Board b, int depth, int maximizingColor) {
+        if (depth == 0 || b.isGameOver()) {
+            return evaluateBoard();  // Trả về đánh giá bàn cờ tại độ sâu hiện tại
+        }
+
+        int value;
+
+        if (maximizingColor == b.getTurn()) {
+            value = Integer.MIN_VALUE;
+            List<int[]> validMoves = b.getValidMoves(-1);  // Nước đi của AI (quân trắng)
+            for (int[] move : validMoves) {
+                b.setState(move[0], move[1], -1);  // Đặt quân của AI
+                value = Math.max(value, minimax(b, depth - 1, -maximizingColor));
+                b.setState(move[0], move[1], 0);  // Hoàn tác nước đi
+            }
+            return value;
+        } else {
+            value = Integer.MAX_VALUE;
+            List<int[]> validMoves = b.getValidMoves(1);  // Nước đi của đối thủ (quân đen)
+            for (int[] move : validMoves) {
+                b.setState(move[0], move[1], 1);  // Đặt quân của đối thủ
+                value = Math.min(value, minimax(b, depth - 1, -maximizingColor));
+                b.setState(move[0], move[1], 0);  // Hoàn tác nước đi
+            }
+            return value;
+        }
+    }
+
+    // Tìm nước đi tốt nhất cho AI bằng Minimax
+    public int[] getBestMove() {
+        int bestMoveValue = Integer.MIN_VALUE;
+        int[] bestMove = null;
+
+        List<int[]> validMoves = board.getValidMoves(-1);  // Nước đi hợp lệ của AI (quân trắng)
+        for (int[] move : validMoves) {
+            board.setState(move[0], move[1], -1);  // Đặt quân của AI
+            int moveValue = minimax(board, 3, -1);  // Gọi Minimax với độ sâu 3
+            if (moveValue > bestMoveValue) {
+                bestMoveValue = moveValue;
+                bestMove = move;
+            }
+            board.setState(move[0], move[1], 0);  // Hoàn tác nước đi
+        }
+
+        return bestMove;  // Trả về nước đi tốt nhất
+    }
+
+    // Chiến lược giảm các lựa chọn hợp lệ của đối thủ (limitOpponentOptions)
+    public int[] limitOpponentOptions() {
+        Board b = board.copy();
+        int[] bestMove = new int[2];
+        int min = Integer.MAX_VALUE;
+
+        List<int[]> validMoves = b.getValidMoves(-1);  // AI chơi quân trắng
+        for (int[] move : validMoves) {
+            b.setState(move[0], move[1], -1);  // Đặt quân của AI
+            int opponentMoves = b.getValidMoves(1).size();  // Số nước đi hợp lệ của đối thủ sau khi AI đi
+            if (opponentMoves < min) {
+                bestMove = move;
+                min = opponentMoves;
+            }
+            b.setState(move[0], move[1], 0);  // Hoàn tác nước đi
+        }
+
+        return bestMove;
+    }
+
+    // Chiến lược chọn nước đi tham lam (greedySelection)
+    public int[] greedySelection() {
+        Board b = board.copy();
+        int[] bestMove = new int[2];
+        int max = Integer.MIN_VALUE;
+
+        List<int[]> validMoves = b.getValidMoves(-1);  // Nước đi hợp lệ của AI
+        for (int[] move : validMoves) {
+            b.setState(move[0], move[1], -1);  // Đặt quân của AI
+            int score = b.count(-1);  // Đếm số quân của AI sau khi thực hiện nước đi
+            if (score > max) {
+                bestMove = move;
+                max = score;
+            }
+            b.setState(move[0], move[1], 0);  // Hoàn tác nước đi
+        }
+
+        return bestMove;
+    }
+}

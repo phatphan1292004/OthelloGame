@@ -1,0 +1,4 @@
+INDEX VERSION 1.134+D:\Nam3\LTAI\ProjectGame\.metadata\.plugins\org.eclipse.jdt.core
+1865797976.index
+3464126802.index
+2924161555.index

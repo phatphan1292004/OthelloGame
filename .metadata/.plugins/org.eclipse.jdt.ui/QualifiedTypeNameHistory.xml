@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="main.Board"/>
+    <fullyQualifiedTypeName name="java.awt.Color"/>
+    <fullyQualifiedTypeName name="javax.swing.border.LineBorder"/>
+    <fullyQualifiedTypeName name="main.Tile"/>
+    <fullyQualifiedTypeName name="main.GUI"/>
+    <fullyQualifiedTypeName name="main.BOT"/>
+</qualifiedTypeNameHistroy>

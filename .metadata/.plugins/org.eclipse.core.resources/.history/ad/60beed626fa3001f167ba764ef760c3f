@@ -1,0 +1,62 @@
+package main;
+
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+
+public class Tile extends JButton {
+    private int row;
+    private int col;
+    private GUI gui;
+    private int state; // 1 for black, -1 for white, 0 for empty
+    private Color bg = new Color(45, 174, 82);
+	private Board board;
+
+    // Constructor for Tile
+    public Tile(GUI gui, int row, int col) {
+        this.gui = gui;
+        this.row = row;
+        this.col = col;
+        this.setBackground(bg);  // Default background color
+        super.setBorder(new LineBorder(Color.BLACK));
+        this.setPreferredSize(new Dimension(40, 40));
+        this.addActionListener(e -> gui.onClick(row, col));
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int pieceColor) {
+        if (pieceColor == 1) {
+            // Đặt biểu tượng quân cờ đen
+            super.setIcon(new ImageIcon("src/blackPiece.gif"));
+        } else if (pieceColor == -1) {
+            // Đặt biểu tượng quân cờ trắng
+            super.setIcon(new ImageIcon("src/whitePiece.png"));
+        }
+    }
+    
+    public void setHighlighted(boolean mode) {
+        if (mode) {
+            // Nếu là trạng thái nổi bật, tạo hình tròn với đường viền màu trắng
+            setBorder(new LineBorder(Color.WHITE));
+            setOpaque(false);
+            setContentAreaFilled(false);  // Làm cho nền trong suốt
+            setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));  // Đổi viền thành màu trắng
+        } else {
+            // Nếu không, viền sẽ là hình tròn với màu đen
+            setBorder(new LineBorder(Color.BLACK));
+            setOpaque(true);
+            setBackground(bg);  // Đặt lại màu nền mặc định
+        }
+    }
+}

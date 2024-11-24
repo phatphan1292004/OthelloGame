@@ -1,0 +1,16 @@
+package main;
+
+public class BOT {
+	private Board board;
+
+	public BOT(Board board) {
+		this.board = board;
+	}
+	
+//	Đánh giá bàn cờ
+	  public int evaluateBoard() {
+	        int blackCount = board.countTileInBoard(1);  // Số quân đen
+	        int whiteCount = board.countTileInBoard(-1);  // Số quân trắng
+	        return blackCount - whiteCount;  // Trả về hiệu số giữa quân đen và quân trắng
+	    }
+}

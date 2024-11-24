@@ -1,0 +1,73 @@
+package main;
+
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+
+public class Tile extends JButton {
+    private int row;
+    private int col;
+    private GUI gui;
+    private int state; // 1 for black, -1 for white, 0 for empty
+    private Color bg = new Color(45, 174, 82);
+	private Object board;
+
+    // Constructor for Tile
+    public Tile(GUI gui, int row, int col) {
+        this.gui = gui;
+        this.row = row;
+        this.col = col;
+        this.setBackground(bg);  // Default background color
+        super.setBorder(new LineBorder(Color.BLACK));
+        this.setPreferredSize(new Dimension(40, 40));
+        this.addActionListener(e -> gui.onClick(row, col));
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int pieceColor) {
+        if (pieceColor == 1) {
+            // Đặt biểu tượng quân cờ đen
+            super.setIcon(new ImageIcon("src/blackPiece.gif"));
+        } else if (pieceColor == -1) {
+            // Đặt biểu tượng quân cờ trắng
+            super.setIcon(new ImageIcon("src/whitePiece.png"));
+        }
+    }
+    
+    public void setHighlighted(boolean mode) {
+        if (mode) {
+            // Nếu là trạng thái nổi bật, đổi viền thành màu trắng
+            super.setBorder(new LineBorder(Color.WHITE));
+        } else {
+            // Nếu không, viền sẽ là màu đen
+            super.setBorder(new LineBorder(Color.BLACK));
+        }
+    }
+    
+    public void highlightValidMoves() {
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                // Kiểm tra nếu ô này có nước đi hợp lệ
+                if (board.isMoveValid(row, col, board.getCurrentPlayer())) {
+                    // Nếu hợp lệ, nổi bật ô
+                    gui.getTile(row, col).setHighlighted(true);
+                } else {
+                    // Nếu không hợp lệ, bỏ nổi bật
+                    gui.getTile(row, col).setHighlighted(false);
+                }
+            }
+        }
+    }
+
+}

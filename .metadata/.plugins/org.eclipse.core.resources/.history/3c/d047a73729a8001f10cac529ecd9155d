@@ -1,0 +1,9 @@
+package main;
+
+public class BOT {
+	private Board board;
+
+	public BOT(Board board) {
+		this.board = board;
+	}
+}

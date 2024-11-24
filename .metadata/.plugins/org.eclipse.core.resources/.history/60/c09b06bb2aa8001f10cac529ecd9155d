@@ -1,0 +1,64 @@
+import java.util.List;
+
+public class BOT {
+    private Board board;
+
+    public BOT(Board board) {
+        this.board = board;
+    }
+
+    // Đánh giá bàn cờ (sự chênh lệch giữa số quân đen và số quân trắng)
+    public int evaluateBoard() {
+        int blackCount = board.countTileInBoard(1);  // Số quân đen
+        int whiteCount = board.countTileInBoard(-1);  // Số quân trắng
+        return blackCount - whiteCount;  // Trả về hiệu số giữa quân đen và quân trắng
+    }
+
+    // Minimax thuật toán đệ quy
+    public int minimax(int depth, boolean isMaximizingPlayer) {
+        if (depth == 0 || board.isGameOver()) {
+            return evaluateBoard();
+        }
+
+        if (isMaximizingPlayer) {
+            int maxEval = Integer.MIN_VALUE;
+            List<int[]> validMoves = board.getValidMoves(-1);  // AI chơi quân trắng
+            for (int[] move : validMoves) {
+                board.setState(move[0], move[1], -1);  // Đặt quân của AI
+                int eval = minimax(depth - 1, false);  // Đệ quy với lượt của đối thủ
+                maxEval = Math.max(maxEval, eval);  // Cập nhật giá trị tối đa
+                board.setState(move[0], move[1], 0);  // Hoàn tác nước đi
+            }
+            return maxEval;
+        } else {
+            int minEval = Integer.MAX_VALUE;
+            List<int[]> validMoves = board.getValidMoves(1);  // Đối thủ chơi quân đen
+            for (int[] move : validMoves) {
+                board.setState(move[0], move[1], 1);  // Đặt quân của đối thủ
+                int eval = minimax(depth - 1, true);  // Đệ quy với lượt của AI
+                minEval = Math.min(minEval, eval);  // Cập nhật giá trị tối thiểu
+                board.setState(move[0], move[1], 0);  // Hoàn tác nước đi
+            }
+            return minEval;
+        }
+    }
+
+    // Tìm nước đi tốt nhất cho AI
+    public int[] getBestMove() {
+        int bestMoveValue = Integer.MIN_VALUE;
+        int[] bestMove = null;
+
+        List<int[]> validMoves = board.getValidMoves(-1);  // AI chơi quân trắng
+        for (int[] move : validMoves) {
+            board.setState(move[0], move[1], -1);  // Đặt quân của AI
+            int moveValue = minimax(3, false);  // Gọi Minimax với độ sâu 3
+            if (moveValue > bestMoveValue) {
+                bestMoveValue = moveValue;  // Cập nhật giá trị tốt nhất
+                bestMove = move;  // Cập nhật nước đi tốt nhất
+            }
+            board.setState(move[0], move[1], 0);  // Hoàn tác nước đi
+        }
+
+        return bestMove;  // Trả về nước đi tốt nhất
+    }
+}

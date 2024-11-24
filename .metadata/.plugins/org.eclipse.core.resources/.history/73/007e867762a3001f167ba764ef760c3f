@@ -1,0 +1,66 @@
+package main;
+
+import java.awt.*;
+import java.awt.event.*;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+
+public class Tile extends JButton {
+    private int row; 
+    private int col; 
+    private GUI g;
+    private int state; // Lưu lại tại button đó là quân cờ đen hay trắng: 1(đen) -1 (trắng) 0(rỗng)
+    
+    public Tile(GUI g, int row, int col) {
+    	 this.g = g;
+         this.row = row;
+         this.col = col;
+    }
+    
+    public Tile(GUI g, int row, int col, int state) {
+        this.g = g;
+        this.row = row;
+        this.col = col;
+        this.state = 0;
+
+        
+        super.setSize(50, 50);
+        this.setBackground(Color.RED); // Thử sử dụng trực tiếp màu đỏ
+        super.setBorder(new LineBorder(Color.RED));
+
+        // Thêm sự kiện khi nhấn vào ô
+        this.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	System.out.println("Tile clicked at: " + row + ", " + col);
+                // Khi nhấn vào ô, gọi phương thức onClick trong lớp GUI
+                g.onClick(row, col);
+            }
+        });
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+    
+    public int getState() {
+        return state;
+    }
+
+    // Đặt quân cờ vào ô
+    public void setState(int state) {
+        this.state = state;
+        if (state == 1) {
+        	  super.setIcon(new ImageIcon("src/blackPiece.gif"));
+        } else if (state == -1) {
+        	  super.setIcon(new ImageIcon("src/whitePiece.png"));
+        } else {
+            this.setIcon(null);
+            this.setBackground(Color.red);
+        }
+    }
+}
