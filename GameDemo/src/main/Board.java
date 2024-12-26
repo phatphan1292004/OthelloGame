@@ -1,12 +1,14 @@
 package main;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Board {
     private int[][] boardState;
     private int currentPlayer;
-    
+    private Tile tile;
+
     // Mảng các hướng di chuyển (cả thẳng và chéo)
     private int[][] offsets = {
         {0, 1}, {1, 0}, {0, -1}, {-1, 0}, // (dọc, ngang)
@@ -28,26 +30,29 @@ public class Board {
     public void setState(int row, int col, int state) {
         if (boardState[row][col] == 0) {  
             boardState[row][col] = state;
-//            System.out.println("Placing piece at: row = " + row + ", col = " + col);  // Debug
             flipPieces(row, col, state);  
-//            printBoardState(); 
             switchPlayer();  
-//            System.out.println("State after move:" + state +"==================");0
         }
     }
     
+    public Tile getTile(int row, int col) {
+        if (isInBounds(row, col)) {
+            return new Tile(row, col, boardState[row][col]);
+        }
+        return null;
+    }
+
+
     public void printBoardState() {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                System.out.print(boardState[i][j] + " ");  // In mỗi ô trên bàn cờ
+                System.out.print(boardState[i][j] + " ");  
             }
             System.out.println();
         }
     }
 
-    
-    
- // Lật quân cờ đối phương
+    // Lật quân cờ đối phương
     public void flipPieces(int row, int col, int player) {
         // Kiểm tra theo tất cả các hướng
         for (int[] offset : offsets) {
@@ -66,13 +71,11 @@ public class Board {
             if (x >= 0 && x < 8 && y >= 0 && y < 8 && boardState[x][y] == player) {
                 // Lật tất cả các quân cờ đối phương bị kẹp
                 for (int[] flip : toFlip) {
-                    boardState[flip[0]][flip[1]] = player;  // Lật quân cờ đối phương
+                    boardState[flip[0]][flip[1]] = player;  
                 }
             }
         }
     }
-
-
 
     // Lấy trạng thái của ô
     public int getState(int row, int col) {
@@ -88,8 +91,7 @@ public class Board {
     public int getCurrentPlayer() {
         return currentPlayer;
     }
-    
-    
+
     // Hàm đếm số lượng quân trắng, quân đen trên bàn cờ   
     public int countTileInBoard(int player) {
         int count = 0;
@@ -106,10 +108,10 @@ public class Board {
     }
     
     public String checkWinner() {
-    	int blackCount = countTileInBoard(1);
-    	int whiteCount = countTileInBoard(-1);
-    	
-    	if (blackCount > whiteCount) {
+        int blackCount = countTileInBoard(1);
+        int whiteCount = countTileInBoard(-1);
+        
+        if (blackCount > whiteCount) {
             return "Black wins!";
         } else if (whiteCount > blackCount) {
             return "White wins!";
@@ -129,10 +131,7 @@ public class Board {
         return true; 
     }
     
-    
-    
     public boolean isMoveValid(int row, int col, int player) {
-        // Nếu ô đó không trống, thì không hợp lệ
         if (boardState[row][col] != 0) {
             return false;
         }
@@ -160,10 +159,9 @@ public class Board {
             }
         }
 
-        return false;  // Không tìm thấy nước đi hợp lệ
+        return false;  
     }
-    
-    
+
     // Lấy ra danh sách các nước đi hợp lệ    
     public List<int[]> getValidMoves(int player) {
         List<int[]> validMoves = new ArrayList<>();
@@ -185,31 +183,30 @@ public class Board {
     private boolean isInBounds(int x, int y) {
         return x >= 0 && x < 8 && y >= 0 && y < 8;
     }
-    
+
     public boolean isSide(int row, int col) {
         return (row == 0 || row == 7 || col == 0 || col == 7);
     }
 
-    
     public boolean isCorner(int row, int col) {
         return (row == 0 && col == 0) || (row == 0 && col == 7) || (row == 7 && col == 0) || (row == 7 && col == 7);
     }
-    
+
     public void reset() {
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				boardState[i][j] = 0;
-			}
-		}
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                boardState[i][j] = 0;
+            }
+        }
 
-		  boardState[3][3] = -1; 
-	      boardState[3][4] = 1;  
-	      boardState[4][3] = 1;  
-	      boardState[4][4] = -1; 
+        boardState[3][3] = -1; 
+        boardState[3][4] = 1;  
+        boardState[4][3] = 1;  
+        boardState[4][4] = -1; 
 
-	      currentPlayer = 1; 
-	}
-    
+        currentPlayer = 1; 
+    }
+
     public Board copyBoard() {
         Board newBoard = new Board();
         for (int i = 0; i < 8; i++) {

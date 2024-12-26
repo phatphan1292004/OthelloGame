@@ -8,7 +8,7 @@ public class Tile extends JButton {
     private int row;
     private int col;
     private GUI gui;
-    private int state; // 1 for black, -1 for white, 0 for empty
+    private int state; // 1 black, -1 white, 0 empty
     private Color bg = new Color(45, 174, 82);
 	private Board board;
 
@@ -18,11 +18,27 @@ public class Tile extends JButton {
         this.row = row;
         this.col = col;
         this.setBackground(bg);  // Default background color
-//        super.setBorder(new LineBorder(Color.BLACK));
+        super.setBorder(new LineBorder(Color.BLACK));
         this.setPreferredSize(new Dimension(40, 40));
         this.addActionListener(e -> gui.onClick(row, col));
     }
+    
+    public void setBack(Color color) {
+    	this.setBackground(color);
+    	this.repaint();
+    }
+    
+    public Tile(int row, int col, int state) {
+        this.row = row;
+        this.col = col;
+        this.state = state;
+    }
 
+    public Tile(int row, int col) {
+    	this.row = row;
+    	this.col = col;
+    }
+    
     public int getRow() {
         return row;
     }
@@ -34,6 +50,7 @@ public class Tile extends JButton {
     public int getState() {
         return state;
     }
+    
 
     public void setState(int state) {
     	this.state = state;
@@ -49,9 +66,10 @@ public class Tile extends JButton {
         this.repaint();
     }
     
+    
+    
     public void setHighlighted(boolean mode) {
         if (mode) {
-            // Nếu là trạng thái nổi bật, đổi viền thành màu trắng
             super.setBorder(new LineBorder(Color.WHITE));
         } else {
         	super.setBorder(new LineBorder(Color.BLACK));
